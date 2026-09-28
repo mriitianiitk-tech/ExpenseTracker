@@ -870,7 +870,7 @@
           <div class="flex items-center pt-4">
             <label class="flex items-center space-x-2 cursor-pointer select-none">
               <input type="checkbox" id="accountIsDefaultCheckbox" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-600">
-              <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Set as Default</span>
+              <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Set as Primary Account</span>
             </label>
           </div>
         </div>
@@ -1208,8 +1208,7 @@
     // Initial Default App State
     const DEFAULT_STATE = {
       accounts: [
-        { id: 'acc_bank', name: 'Primary Bank Account', type: 'bank', isDefault: true, initialBalance: 0, color: '#0284c7' },
-        { id: 'acc_self', name: 'Self (Wallet/Cash)', type: 'wallet', isDefault: false, initialBalance: 0, color: '#6366f1' },
+        { id: 'acc_self', name: 'Self', type: 'bank', isDefault: true, initialBalance: 0, color: '#6366f1' },
         { id: 'acc_wife', name: 'Wife', type: 'wallet', isDefault: false, initialBalance: 0, color: '#ec4899' }
       ],
       creditCards: [
@@ -1264,23 +1263,13 @@
         appState.accounts = JSON.parse(JSON.stringify(DEFAULT_STATE.accounts));
         return;
       }
-      const hasBank = appState.accounts.some(a => a.type === 'bank' || a.id === 'acc_bank' || (a.name && a.name.toLowerCase().includes('bank')));
-      if (!hasBank) {
-        appState.accounts.unshift({
-          id: 'acc_bank',
-          name: 'Primary Bank Account',
-          type: 'bank',
-          isDefault: true,
-          initialBalance: 0,
-          color: '#0284c7'
-        });
-        appState.accounts.forEach((a, idx) => {
-          if (idx > 0 && a.isDefault) a.isDefault = false;
-        });
+      // Ensure at least one account is marked as default / primary
+      if (!appState.accounts.some(a => a.isDefault)) {
+        appState.accounts[0].isDefault = true;
       }
       appState.accounts.forEach(a => {
         if (!a.type) {
-          a.type = (a.id === 'acc_bank' || (a.name && a.name.toLowerCase().includes('bank'))) ? 'bank' : 'wallet';
+          a.type = (a.name && a.name.toLowerCase().includes('bank')) ? 'bank' : 'wallet';
         }
         if (a.initialBalance === undefined || isNaN(Number(a.initialBalance))) {
           a.initialBalance = 0;
@@ -2168,7 +2157,7 @@
                   <span class="text-[9px] px-2 py-0.5 rounded-full ${isBank ? 'bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-900/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'} font-bold">
                     ${isBank ? 'Bank Account' : (acc.type === 'wallet' ? 'Wallet / Cash' : (acc.type || 'Account'))}
                   </span>
-                  ${acc.isDefault ? '<span class="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold">Default</span>' : ''}
+                  ${acc.isDefault ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40 font-bold inline-flex items-center space-x-1"><i data-lucide="check-circle" class="w-2.5 h-2.5"></i><span>Primary</span></span>' : ''}
                 </div>
                 <div class="mt-1 flex items-center space-x-2 flex-wrap">
                   ${lastCalibratedHtml}
@@ -2204,16 +2193,22 @@
           </div>
 
           <!-- Action Buttons Bar -->
-          <div class="flex items-center justify-between pt-1">
-            <div class="flex items-center space-x-2">
-              <button onclick="openCalibrateModal('${acc.id}')" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm shadow-indigo-600/25 active:scale-95 transition">
+          <div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+            <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+              <button onclick="openCalibrateModal('${acc.id}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm shadow-indigo-600/25 active:scale-95 transition">
                 <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
-                <span>Calibrate Balance</span>
+                <span>Calibrate</span>
               </button>
               <button onclick="openEditAccountModal('${acc.id}')" class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1 active:scale-95 transition">
                 <i data-lucide="edit-3" class="w-3 h-3"></i>
                 <span>Edit</span>
               </button>
+              ${!acc.isDefault ? `
+                <button onclick="setAccountAsPrimary('${acc.id}')" class="px-2.5 py-1.5 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40 rounded-xl text-xs font-bold flex items-center space-x-1 active:scale-95 transition" title="Mark this account as Primary">
+                  <i data-lucide="star" class="w-3 h-3 text-amber-500 fill-amber-400"></i>
+                  <span>Make Primary</span>
+                </button>
+              ` : ''}
             </div>
             ${appState.accounts.length > 1 ? `
               <button onclick="deleteAccount('${acc.id}')" class="p-2 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition" title="Delete Account">
@@ -2635,7 +2630,7 @@
       const accOptGroup = document.createElement('optgroup');
       accOptGroup.label = 'Bank & Cash Accounts';
       appState.accounts.forEach(acc => {
-        accOptGroup.appendChild(new Option(acc.name + (acc.isDefault ? ' (Default)' : ''), acc.id));
+        accOptGroup.appendChild(new Option(acc.name + (acc.isDefault ? ' (Primary)' : ''), acc.id));
         fromAcc.add(new Option(acc.name, acc.id));
         toAcc.add(new Option(acc.name, acc.id));
       });
@@ -2926,8 +2921,10 @@
       const sel = document.getElementById('payBillAccountSelect');
       sel.innerHTML = '';
       appState.accounts.forEach(acc => {
-        sel.add(new Option(acc.name, acc.id));
+        sel.add(new Option(acc.name + (acc.isDefault ? ' (Primary)' : ''), acc.id));
       });
+      const defAcc = appState.accounts.find(a => a.isDefault) || appState.accounts[0];
+      if (defAcc) sel.value = defAcc.id;
 
       openModal('payBillModal');
     }
@@ -3071,9 +3068,24 @@
       showToast(`Account "${newAcc.name}" added`, 'success');
     }
 
+    function setAccountAsPrimary(accId) {
+      const acc = appState.accounts.find(a => a.id === accId);
+      if (!acc) return;
+      appState.accounts.forEach(a => {
+        a.isDefault = (a.id === accId);
+      });
+      saveLocal();
+      renderApp();
+      showToast(`"${acc.name}" is now marked as Primary Account`, 'success');
+    }
+
     function deleteAccount(accId) {
       const acc = appState.accounts.find(a => a.id === accId);
       if (!acc) return;
+      if (appState.accounts.length <= 1) {
+        showToast('You must have at least one account', 'error');
+        return;
+      }
       const txCount = appState.transactions.filter(t => t.accountId === accId || t.fromAccountId === accId || t.toAccountId === accId).length;
       if (txCount > 0) {
         if (!confirm(`"${acc.name}" has ${txCount} linked transaction(s). Deleting the account will keep the transactions but remove the account from your list. Continue?`)) {
@@ -3090,7 +3102,7 @@
       }
       saveLocal();
       renderApp();
-      showToast('Account removed', 'info');
+      showToast(`Account "${acc.name}" deleted`, 'info');
     }
 
     // ================= ACCOUNT CALIBRATION LOGIC =================
