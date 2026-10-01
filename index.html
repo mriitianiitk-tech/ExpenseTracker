@@ -1196,6 +1196,87 @@
     </div>
   </div>
 
+  <!-- ================= MODAL: TRANSACTION DETAIL ================= -->
+  <div id="txDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200/80 dark:border-darkborder text-xs">
+      <!-- Header strip -->
+      <div id="txDetailHeaderStrip" class="p-5 pb-4 relative">
+        <button onclick="closeModal('txDetailModal')" class="absolute top-4 right-4 w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <div class="flex items-center space-x-3">
+          <div id="txDetailIconBox" class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0">
+            <i id="txDetailIcon" data-lucide="arrow-up-right" class="w-5 h-5"></i>
+          </div>
+          <div class="min-w-0 pr-8">
+            <div id="txDetailTitle" class="text-base font-black text-white truncate">Transaction</div>
+            <div id="txDetailSubtitle" class="text-[11px] text-white/70 truncate mt-0.5"></div>
+          </div>
+        </div>
+        <div id="txDetailAmount" class="text-2xl font-black text-white mt-4 tracking-tight"></div>
+      </div>
+
+      <!-- Detail rows -->
+      <div class="p-5 space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 space-y-0.5">
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</div>
+            <div id="txDetailDate" class="text-xs font-bold text-slate-900 dark:text-white"></div>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 space-y-0.5">
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Type</div>
+            <div id="txDetailType" class="text-xs font-bold text-slate-900 dark:text-white capitalize"></div>
+          </div>
+        </div>
+
+        <div id="txDetailAccountRow" class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 space-y-0.5">
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account</div>
+          <div id="txDetailAccount" class="text-xs font-bold text-slate-900 dark:text-white"></div>
+        </div>
+
+        <div id="txDetailTransferRow" class="hidden bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 space-y-0.5">
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Transfer Route</div>
+          <div id="txDetailTransferRoute" class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+            <span id="txDetailFrom"></span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-indigo-500 shrink-0"></i>
+            <span id="txDetailTo"></span>
+          </div>
+        </div>
+
+        <div id="txDetailCategoryRow" class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 space-y-0.5">
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Category</div>
+          <div id="txDetailCategory" class="text-xs font-bold text-slate-900 dark:text-white"></div>
+        </div>
+
+        <div id="txDetailDescRow" class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 space-y-0.5">
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Description / Note</div>
+          <div id="txDetailDesc" class="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed"></div>
+        </div>
+
+        <div id="txDetailEmiRow" class="hidden bg-purple-50 dark:bg-purple-950/40 rounded-2xl p-3 border border-purple-100 dark:border-purple-900/40 space-y-0.5">
+          <div class="text-[10px] font-bold text-purple-500 uppercase tracking-wider">EMI Details</div>
+          <div id="txDetailEmiInfo" class="text-xs font-bold text-slate-900 dark:text-white"></div>
+        </div>
+
+        <div id="txDetailStatementRow" class="hidden bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl p-3 border border-indigo-100 dark:border-indigo-900/40 space-y-0.5">
+          <div class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">Billing Statement Month</div>
+          <div id="txDetailStatement" class="text-xs font-bold text-slate-900 dark:text-white"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex space-x-2 pt-1">
+          <button onclick="closeModal('txDetailModal')" class="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            Close
+          </button>
+          <button id="txDetailDeleteBtn" onclick="" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl transition active:scale-95 flex items-center justify-center space-x-1.5">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast" class="fixed top-4 inset-x-4 max-w-xs mx-auto z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
     <div id="toastInner" class="px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold text-center text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900">
@@ -1808,7 +1889,11 @@
       container.innerHTML = '';
       filtered.forEach(tx => {
         const card = document.createElement('div');
-        card.className = 'bg-white dark:bg-darkcard p-3.5 rounded-2xl border border-slate-200/80 dark:border-darkborder shadow-xs flex items-center justify-between hover:border-indigo-200 transition';
+        card.className = 'bg-white dark:bg-darkcard p-3.5 rounded-2xl border border-slate-200/80 dark:border-darkborder shadow-xs flex items-center justify-between hover:border-indigo-200 active:scale-[0.99] transition cursor-pointer';
+        card.onclick = (e) => {
+          // don't open detail when clicking the delete button
+          if (!e.target.closest('button')) openTransactionDetail(tx.id);
+        };
 
         let iconName = 'arrow-up-right';
         let iconBg = 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400';
@@ -1817,6 +1902,7 @@
         let isCard = appState.creditCards.some(c => c.id === tx.accountId);
         let entityName = getEntityName(tx.accountId);
         let subText = `${tx.category || 'Expense'} • ${entityName}`;
+        let cardTitle = tx.description || tx.category || 'Expense';
 
         if (tx.isEmi) {
           iconName = 'layers';
@@ -1824,6 +1910,7 @@
           amountFormatted = `- ${formatCurrency(tx.amount)}`;
           amountClass = 'text-rose-600 dark:text-rose-400 font-extrabold';
           subText = `EMI (${tx.installmentIndex}/${tx.totalInstallments}) • ${entityName}`;
+          cardTitle = tx.description || 'EMI Payment';
         } else if (isCard) {
           iconName = 'credit-card';
           const stmtMonth = getTxEffectiveMonth(tx);
@@ -1841,6 +1928,7 @@
           iconBg = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400';
           amountFormatted = `+ ${formatCurrency(tx.amount)}`;
           amountClass = 'text-emerald-600 dark:text-emerald-400 font-extrabold';
+          cardTitle = tx.description || tx.category || 'Income';
           const effMonth = getTxEffectiveMonth(tx);
           const txMonth = (tx.date || '').substring(0, 7);
           if (effMonth !== txMonth) {
@@ -1851,16 +1939,19 @@
           }
         } else if (tx.type === 'transfer') {
           iconName = 'arrow-left-right';
+          const toName = getEntityName(tx.toAccountId);
+          const fromName = getEntityName(tx.fromAccountId);
+          cardTitle = `Transferred to ${toName}`;
           if (appState.preferences?.countTransferAsExpense) {
             iconBg = 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400';
             amountFormatted = `- ${formatCurrency(tx.amount)}`;
             amountClass = 'text-rose-600 dark:text-rose-400 font-extrabold';
-            subText = `Transfer (Expense) • ${getEntityName(tx.fromAccountId)} ➔ ${getEntityName(tx.toAccountId)}`;
+            subText = `Transfer (Expense) • ${fromName} ➔ ${toName}`;
           } else {
             iconBg = 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400';
             amountFormatted = `${formatCurrency(tx.amount)}`;
             amountClass = 'text-indigo-600 dark:text-indigo-400 font-extrabold';
-            subText = `${getEntityName(tx.fromAccountId)} ➔ ${getEntityName(tx.toAccountId)}`;
+            subText = `${fromName} ➔ ${toName}`;
           }
         }
 
@@ -1872,13 +1963,13 @@
               <i data-lucide="${iconName}" class="w-4 h-4"></i>
             </div>
             <div class="min-w-0">
-              <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">${tx.description || tx.category || 'Transaction'}</h4>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">${cardTitle}</h4>
               <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">${subText} • <span class="text-slate-400">${dateFormatted}</span></p>
             </div>
           </div>
           <div class="flex items-center space-x-2 shrink-0">
             <span class="text-xs ${amountClass}">${amountFormatted}</span>
-            <button onclick="deleteTransaction('${tx.id}')" class="p-1.5 text-slate-300 hover:text-rose-500 rounded-lg transition" title="Delete">
+            <button onclick="event.stopPropagation(); deleteTransaction('${tx.id}')" class="p-1.5 text-slate-300 hover:text-rose-500 rounded-lg transition" title="Delete">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -2785,6 +2876,124 @@
       closeModal('txModal');
       renderApp();
       showToast('Transaction saved successfully', 'success');
+    }
+
+    function openTransactionDetail(txId) {
+      const tx = appState.transactions.find(t => t.id === txId);
+      if (!tx) return;
+
+      // Determine visual theme for header strip
+      const isTransfer = tx.type === 'transfer';
+      const isIncome = tx.type === 'income';
+      const isEmi = !!tx.isEmi;
+      const isCreditCard = appState.creditCards.some(c => c.id === tx.accountId);
+
+      let headerGradient = 'bg-gradient-to-br from-rose-500 to-rose-700'; // default expense
+      let iconName = 'arrow-up-right';
+      let displayTitle = tx.description || tx.category || 'Expense';
+      let displayAmount = `- ${formatCurrency(tx.amount)}`;
+
+      if (isTransfer) {
+        headerGradient = appState.preferences?.countTransferAsExpense
+          ? 'bg-gradient-to-br from-rose-500 to-rose-700'
+          : 'bg-gradient-to-br from-indigo-500 to-indigo-700';
+        iconName = 'arrow-left-right';
+        displayTitle = `Transferred to ${getEntityName(tx.toAccountId)}`;
+        displayAmount = appState.preferences?.countTransferAsExpense
+          ? `- ${formatCurrency(tx.amount)}`
+          : formatCurrency(tx.amount);
+      } else if (isIncome) {
+        headerGradient = 'bg-gradient-to-br from-emerald-500 to-emerald-700';
+        iconName = 'arrow-down-left';
+        displayTitle = tx.description || tx.category || 'Income';
+        displayAmount = `+ ${formatCurrency(tx.amount)}`;
+      } else if (isEmi) {
+        headerGradient = 'bg-gradient-to-br from-purple-500 to-purple-700';
+        iconName = 'layers';
+        displayTitle = tx.description || 'EMI Payment';
+        displayAmount = `- ${formatCurrency(tx.amount)}`;
+      } else if (isCreditCard) {
+        headerGradient = 'bg-gradient-to-br from-rose-500 to-pink-700';
+        iconName = 'credit-card';
+      }
+
+      // Populate header
+      const strip = document.getElementById('txDetailHeaderStrip');
+      strip.className = `p-5 pb-4 relative ${headerGradient}`;
+      document.getElementById('txDetailIconBox').className = 'w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 text-white';
+      document.getElementById('txDetailIcon').setAttribute('data-lucide', iconName);
+      document.getElementById('txDetailTitle').textContent = displayTitle;
+      document.getElementById('txDetailAmount').textContent = displayAmount;
+
+      const dateObj = new Date(tx.date);
+      const dateFormatted = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('txDetailSubtitle').textContent = dateFormatted;
+
+      // Populate detail rows
+      document.getElementById('txDetailDate').textContent = dateFormatted;
+
+      const typeLabel = isEmi ? 'EMI Installment' : (isTransfer ? 'Transfer' : (isIncome ? 'Income' : (isCreditCard ? 'Card Expense' : 'Expense')));
+      document.getElementById('txDetailType').textContent = typeLabel;
+
+      // Account row vs Transfer row
+      const accountRow = document.getElementById('txDetailAccountRow');
+      const transferRow = document.getElementById('txDetailTransferRow');
+      if (isTransfer) {
+        accountRow.classList.add('hidden');
+        transferRow.classList.remove('hidden');
+        document.getElementById('txDetailFrom').textContent = getEntityName(tx.fromAccountId);
+        document.getElementById('txDetailTo').textContent = getEntityName(tx.toAccountId);
+      } else {
+        accountRow.classList.remove('hidden');
+        transferRow.classList.add('hidden');
+        document.getElementById('txDetailAccount').textContent = getEntityName(tx.accountId);
+      }
+
+      // Category row
+      const catRow = document.getElementById('txDetailCategoryRow');
+      if (isTransfer) {
+        catRow.classList.add('hidden');
+      } else {
+        catRow.classList.remove('hidden');
+        document.getElementById('txDetailCategory').textContent = tx.category || (isIncome ? 'Income' : 'Expense');
+      }
+
+      // Description row
+      const descRow = document.getElementById('txDetailDescRow');
+      if (tx.description && tx.description.trim()) {
+        descRow.classList.remove('hidden');
+        document.getElementById('txDetailDesc').textContent = tx.description;
+      } else {
+        descRow.classList.add('hidden');
+      }
+
+      // EMI row
+      const emiRow = document.getElementById('txDetailEmiRow');
+      if (isEmi) {
+        emiRow.classList.remove('hidden');
+        document.getElementById('txDetailEmiInfo').textContent = `Installment ${tx.installmentIndex} of ${tx.totalInstallments}`;
+      } else {
+        emiRow.classList.add('hidden');
+      }
+
+      // Statement month row
+      const stmtRow = document.getElementById('txDetailStatementRow');
+      if (tx.statementMonth) {
+        stmtRow.classList.remove('hidden');
+        document.getElementById('txDetailStatement').textContent = formatMonthDisplay(tx.statementMonth);
+      } else {
+        stmtRow.classList.add('hidden');
+      }
+
+      // Delete button
+      const delBtn = document.getElementById('txDetailDeleteBtn');
+      delBtn.onclick = () => {
+        closeModal('txDetailModal');
+        deleteTransaction(txId);
+      };
+
+      openModal('txDetailModal');
+      lucide.createIcons();
     }
 
     function deleteTransaction(id) {
